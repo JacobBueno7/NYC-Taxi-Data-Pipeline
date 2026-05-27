@@ -1,0 +1,78 @@
+version: 2
+sources:
+  - name: raw
+    schema: main
+    tables:
+      - name: yellow_taxi
+        description: "Raw data for yellow taxi trips in January 2024"
+        columns:
+          - name: VendorID
+            description: "Code indicating the provider associated with the trip record"
+          - name: tpep_pickup_datetime
+            description: "Date and time when the meter was engaged"
+          - name: tpep_dropoff_datetime
+            description: "Date and time when the meter was disengaged"
+          - name: passenger_count
+            description: "Number of passengers in the trip"
+          - name: trip_distance
+            description: "Distance of the trip in miles"
+          - name: RatecodeID
+            description: "The final rate code in effect at the end of the trip"
+          - name: tolls_amount
+            description: "Total amount of all tolls paid during the trip"
+          - name: total_amount
+            description: "The total amount charged to passengers. Does not include cash tips."
+          - name: congestion_surcharge
+            description: "The congestion surcharge for trips in the Manhattan area"
+          - name: airport_fee
+            description: "The airport fee for trips that start or end at an airport"
+          - name: PULocationID
+            description: "Location ID where the trip started"
+          - name: DOLocationID
+            description: "Location ID where the trip ended"
+
+models:
+  - name: stg_yellow_taxi
+    description: "Cleans and renames fields from raw source"
+    columns:
+      - name: vendor_id
+        description: "Code indicating the provider associated with the trip record"
+        tests:
+          - not_null
+      - name: pickup_datetime
+        description: "Date and time when the meter was engaged"
+        tests:
+          - not_null
+      - name: dropoff_datetime
+        description: "Date and time when the meter was disengaged"
+        tests:
+          - not_null
+      - name: passenger_count
+        description: "Number of passengers in the trip"
+        tests:
+          - not_null
+      - name: trip_distance
+        description: "Distance of the trip in miles"
+        tests:
+          - not_null    
+      - name: pickup_loc_id
+        description: "Location ID where the trip started"
+        tests:
+          - not_null  
+      - name: dropoff_loc_id
+        description: "Location ID where the trip ended"
+        tests:
+          - not_null
+      - name: total_amount 
+        description: "The total amount charged to passengers. Does not include cash tips."
+        tests:
+          - not_null
+      - name: congestion_surcharge
+        description: "The congestion surcharge for trips in the Manhattan area"
+        tests:
+          - not_null  
+      - name: airport_fee
+        description: "The airport fee for trips that start or end at an airport"
+        tests:
+          - not_null
+      

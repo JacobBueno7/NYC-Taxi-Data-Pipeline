@@ -1,0 +1,14 @@
+name: 'NYC_Taxi_Pipeline'
+version:  '1.0.0'
+profile: 'NYC_Taxi_Pipeline'
+
+require-dbt-version: '>=1.0.4'
+
+model-paths: ['models']
+
+models:
+  NYC_Taxi_Pipeline:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

@@ -1,0 +1,7 @@
+NYC_Taxi_Pipeline:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "../data/raw/database.duckdb"
+      threads: 4

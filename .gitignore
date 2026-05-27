@@ -1,0 +1,17 @@
+# Airflow
+logs/
+.env
+
+# dbt
+dbt/.user.yml
+dbt/target/
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Data (large binary files — download via the pipeline)
+data/raw/*.parquet
+data/raw/*.duckdb
