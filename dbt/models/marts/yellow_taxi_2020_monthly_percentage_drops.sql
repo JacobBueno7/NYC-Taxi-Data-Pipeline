@@ -1,6 +1,6 @@
 with monthly as (
     select month(trip_date) as month_num, strftime(trip_date, '%B') as month, sum(total_trips) as total_trips, sum(total_revenue) as total_revenue
-    from fct_yellow_taxi
+    from {{ ref('fct_yellow_taxi') }}
     where year(trip_date) = 2020
     group by month(trip_date), strftime(trip_date, '%B')
 ),

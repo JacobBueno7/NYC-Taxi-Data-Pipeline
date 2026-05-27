@@ -241,6 +241,8 @@ If a task fails or you want to see progress, click the task box in the Grid view
 
 > **Note:** The `extract_taxi_data` task downloads 72 monthly Parquet files (2020–2025) and will take a while depending on your internet connection. The files are skipped if they already exist locally, so re-runs are safe.
 
+> **Troubleshooting — 403 error during download:** Occasionally the NYC TLC server returns a 403 and does not let you download the file. If the `extract_taxi_data` task fails with a 403 error, run `docker compose down` and then re-trigger the pipeline. Already-downloaded files will be skipped, so only the missing ones will be retried.
+
 **To stop all services:**
 
 ```bash
