@@ -1,0 +1,10 @@
+version: 2
+
+seeds:
+  - name: vendor_lookup
+    description: "Static reference data: TLC-published mapping of VendorID codes to provider names. Not sourced from the pipeline's ingested data - maintained as a seed."
+    columns:
+      - name: vendor_id
+        tests: [not_null, unique]
+      - name: vendor_name
+        tests: [not_null]

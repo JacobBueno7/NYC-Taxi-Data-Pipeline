@@ -5,10 +5,20 @@ profile: 'NYC_Taxi_Pipeline'
 require-dbt-version: '>=1.0.4'
 
 model-paths: ['models']
+seed-paths: ['seeds']
 
 models:
   NYC_Taxi_Pipeline:
-    staging:
+    bronze:
       +materialized: view
-    marts:
+      +schema: bronze
+    silver:
+      +materialized: view
+      +schema: silver
+    gold:
       +materialized: table
+      +schema: gold
+
+seeds:
+  NYC_Taxi_Pipeline:
+    +schema: seeds

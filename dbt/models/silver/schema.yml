@@ -1,0 +1,87 @@
+version: 2
+
+models:
+  - name: stg_dv_yellow_taxi
+    description: "Silver prep layer: applies data-quality gates (passenger_count > 0, trip_distance > 0, pickup year >= 2020) and computes every Data Vault hash key and hashdiff used by the hubs, links, and satellites below. Not a Data Vault object itself - a shared hashing layer so key-generation logic lives in exactly one place."
+
+  - name: hub_vendor
+    description: "Data Vault hub: one row per distinct taxi vendor (business key = vendor_id)."
+    columns:
+      - name: vendor_hk
+        tests: [not_null, unique]
+      - name: vendor_id
+        tests: [not_null]
+
+  - name: hub_location
+    description: "Data Vault hub: one row per distinct TLC taxi zone location ID, sourced from both the zone lookup table and any pickup/dropoff IDs seen in trips."
+    columns:
+      - name: location_hk
+        tests: [not_null, unique]
+      - name: location_id
+        tests: [not_null]
+
+  - name: hub_trip
+    description: "Data Vault hub: one row per distinct trip. Trips have no natural ID in the TLC source data, so the business key (trip_bk) is a composite of vendor_id + pickup_datetime + dropoff_datetime + pickup_loc_id + dropoff_loc_id + trip_distance + fare_amount. Two trips identical across all of those fields collapse to a single hub row - a known, accepted limitation given the source data."
+    columns:
+      - name: trip_hk
+        tests: [not_null, unique]
+
+  - name: link_trip
+    description: "Data Vault link: associates each trip with its vendor, pickup location, and dropoff location."
+    columns:
+      - name: trip_link_hk
+        tests: [not_null, unique]
+      - name: trip_hk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_trip')
+              field: trip_hk
+      - name: vendor_hk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_vendor')
+              field: vendor_hk
+      - name: pickup_location_hk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_location')
+              field: location_hk
+      - name: dropoff_location_hk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_location')
+              field: location_hk
+
+  - name: sat_trip_details
+    description: "Data Vault satellite: descriptive trip attributes (times, fares, surcharges) hanging off hub_trip. A new row is inserted only when the hashdiff of these attributes changes for a given trip_hk."
+    columns:
+      - name: trip_hk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_trip')
+              field: trip_hk
+
+  - name: sat_location_details
+    description: "Data Vault satellite: borough/zone/service-zone attributes hanging off hub_location."
+    columns:
+      - name: location_hk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_location')
+              field: location_hk
+
+  - name: sat_vendor_details
+    description: "Data Vault satellite: vendor display name (from the vendor_lookup seed) hanging off hub_vendor."
+    columns:
+      - name: vendor_hk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_vendor')
+              field: vendor_hk

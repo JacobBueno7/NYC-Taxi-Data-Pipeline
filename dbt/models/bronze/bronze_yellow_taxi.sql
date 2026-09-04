@@ -1,0 +1,22 @@
+select
+    VendorID as vendor_id,
+    tpep_pickup_datetime as pickup_datetime,
+    tpep_dropoff_datetime as dropoff_datetime,
+    passenger_count as passenger_cnt,
+    trip_distance,
+    RatecodeID as ratecode_id,
+    PULocationID as pickup_loc_id,
+    DOLocationID as dropoff_loc_id,
+    payment_type,
+    fare_amount,
+    extra,
+    mta_tax,
+    tip_amount,
+    tolls_amount,
+    improvement_surcharge,
+    congestion_surcharge,
+    airport_fee,
+    total_amount,
+    current_timestamp as _loaded_at,
+    'yellow_taxi_parquet' as _record_source
+from {{ source('raw', 'yellow_taxi') }}
