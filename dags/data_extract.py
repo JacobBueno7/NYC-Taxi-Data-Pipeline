@@ -18,6 +18,19 @@ def download_file():
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
 
+def download_zone_lookup():
+    url = 'https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv'
+    output_path = 'data/raw/taxi_zone_lookup.csv'
+    if os.path.exists(output_path):
+        return
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'wb') as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            f.write(chunk)
+
 def load_file():
     con = duckdb.connect(database='data/raw/database.duckdb')
     con.execute(f"CREATE OR REPLACE TABLE yellow_taxi AS SELECT * FROM read_parquet('data/raw/yellow_tripdata_*.parquet')")
+    con.execute(f"CREATE OR REPLACE TABLE taxi_zone_lookup AS SELECT * FROM read_csv_auto('data/raw/taxi_zone_lookup.csv')")

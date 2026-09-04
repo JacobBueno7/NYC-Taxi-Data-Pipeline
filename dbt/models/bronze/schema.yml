@@ -1,0 +1,62 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: main
+    tables:
+      - name: yellow_taxi
+        description: "Raw yellow taxi trip records loaded directly from TLC parquet files (2020-2025), one row per trip as published, no filtering applied."
+        columns:
+          - name: VendorID
+            description: "Code indicating the TPEP provider that recorded the trip"
+          - name: tpep_pickup_datetime
+            description: "Date and time when the meter was engaged"
+          - name: tpep_dropoff_datetime
+            description: "Date and time when the meter was disengaged"
+          - name: passenger_count
+            description: "Number of passengers in the trip"
+          - name: trip_distance
+            description: "Distance of the trip in miles"
+          - name: RatecodeID
+            description: "The final rate code in effect at the end of the trip"
+          - name: PULocationID
+            description: "TLC Taxi Zone in which the taximeter was engaged"
+          - name: DOLocationID
+            description: "TLC Taxi Zone in which the taximeter was disengaged"
+          - name: payment_type
+            description: "Numeric code signifying how the passenger paid for the trip"
+          - name: fare_amount
+            description: "Time-and-distance fare calculated by the meter"
+          - name: extra
+            description: "Miscellaneous extras and surcharges"
+          - name: mta_tax
+            description: "$0.50 MTA tax automatically triggered based on the metered rate in use"
+          - name: tip_amount
+            description: "Tip amount - automatically populated for credit card tips"
+          - name: tolls_amount
+            description: "Total amount of all tolls paid during the trip"
+          - name: improvement_surcharge
+            description: "$0.30 improvement surcharge assessed on hailed trips"
+          - name: total_amount
+            description: "The total amount charged to passengers. Does not include cash tips"
+          - name: congestion_surcharge
+            description: "Congestion surcharge for trips in the Manhattan congestion zone"
+          - name: airport_fee
+            description: "Airport fee for trips that start or end at an airport"
+      - name: taxi_zone_lookup
+        description: "Raw TLC taxi zone lookup table mapping LocationID to borough/zone/service zone."
+        columns:
+          - name: LocationID
+            description: "TLC Taxi Zone identifier"
+          - name: Borough
+            description: "NYC borough containing the zone"
+          - name: Zone
+            description: "Taxi zone name"
+          - name: service_zone
+            description: "Service zone classification"
+
+models:
+  - name: bronze_yellow_taxi
+    description: "Bronze layer: raw yellow taxi trips with columns renamed to snake_case and light type casting. One row per source record, no filtering."
+  - name: bronze_taxi_zone_lookup
+    description: "Bronze layer: raw taxi zone lookup with columns renamed to snake_case. One row per TLC location ID."

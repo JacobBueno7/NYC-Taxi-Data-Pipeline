@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: dim_vendor
+    description: "Gold dimension: one row per taxi vendor with a display name."
+    columns:
+      - name: vendor_hk
+        tests: [not_null, unique]
+
+  - name: dim_location
+    description: "Gold dimension: one row per TLC taxi zone with borough/zone/service-zone names."
+    columns:
+      - name: location_hk
+        tests: [not_null, unique]
+
+  - name: dim_date
+    description: "Gold date dimension / calendar spine, 2020-01-01 through 2026-12-31."
+    columns:
+      - name: date_day
+        tests: [not_null, unique]
+
+  - name: fct_trips
+    description: "Gold fact table: one row per trip, rebuilt from the silver Data Vault (link_trip joined to sat_trip_details), with derived trip_duration_minutes and tip_pct."
+    columns:
+      - name: trip_hk
+        tests: [not_null, unique]
+
+  - name: fct_daily_summary
+    description: "Gold fact table: trips and revenue aggregated to the day grain. Successor to the old fct_yellow_taxi model - same shape, now sourced from fct_trips."
+    columns:
+      - name: trip_date
+        tests: [not_null, unique]
+
+  - name: yellow_taxi_yearly_trips_amounts
+    description: "Yearly rollup of total trips and revenue."
+
+  - name: yellow_taxi_2020_monthly_percentage_drops
+    description: "Month-over-month percent change in trips and revenue during 2020, highlighting the COVID-19 demand collapse."
+
+  - name: trips_by_payment_type
+    description: "Trip counts, revenue, and tipping behavior broken out by payment type."
+
+  - name: trips_by_borough
+    description: "Trip counts, revenue, and average distance broken out by pickup borough x dropoff borough."
+
+  - name: trips_by_hour_dow
+    description: "Trip counts, average fare, and average tip percentage broken out by day of week and hour of day - a ridership heatmap."
+
+  - name: vendor_performance
+    description: "Trip counts, revenue, average distance, and average tip percentage broken out by vendor."
+
+  - name: trip_distance_buckets
+    description: "Trips bucketed by distance (short/medium/long/very long) with average fare, duration, and tip percentage per bucket."
